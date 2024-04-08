@@ -2,7 +2,9 @@ package edu.sjsu.cmpe272.simpleblog.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import edu.sjsu.cmpe272.simpleblog.common.entity.Message;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import edu.sjsu.cmpe272.simpleblog.common.request.MessageRequest;
+import edu.sjsu.cmpe272.simpleblog.common.response.MessageSuccess;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -67,9 +70,10 @@ public class Util {
         }
     }
 
-    String signMessageRequest(Message message, UserKey userKey) throws JsonProcessingException, NoSuchAlgorithmException {
+    String signMessageRequest(MessageRequest message, UserKey userKey) throws JsonProcessingException, NoSuchAlgorithmException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
 
             ObjectNode node = objectMapper.createObjectNode();
             node.put("date", String.valueOf(message.getDate()));
@@ -115,5 +119,13 @@ public class Util {
         PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
 
         return privateKey;
+    }
+
+    String printMessages(List<MessageSuccess> msgList) {
+        StringBuilder sb = new StringBuilder();
+        for (MessageSuccess m : msgList) {
+            sb.append(m.toString()+"\n");
+        }
+        return sb.toString();
     }
 }

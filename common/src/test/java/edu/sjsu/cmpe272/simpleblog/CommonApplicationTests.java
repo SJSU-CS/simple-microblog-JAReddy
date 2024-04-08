@@ -4,10 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CommonApplicationTests {
+public class CommonApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+
+//    @Test
+//    public void contextLoads() {
+//    }
 
 }

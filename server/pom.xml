@@ -64,7 +64,13 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>edu.sjsu.cmpe272.simpleblog</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.springframework</groupId>-->
 <!--            <artifactId>spring-web</artifactId>-->
 <!--        </dependency>-->

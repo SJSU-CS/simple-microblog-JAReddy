@@ -9,4 +9,8 @@ public class UserSuccess {
     public UserSuccess(String message) {
         this.message = message;
     }
+
+    public UserSuccess() {
+
+    }
 }

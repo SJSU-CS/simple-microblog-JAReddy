@@ -2,10 +2,12 @@ package edu.sjsu.cmpe272.simpleblog.server.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.sjsu.cmpe272.simpleblog.common.request.MessageRequest;
+import edu.sjsu.cmpe272.simpleblog.common.response.MessageSuccess;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -16,20 +18,29 @@ public class Message {
     @JsonProperty("message-id")
     Long messageId;
 
-    Date date;
+    LocalDateTime date;
     String author;
 
     String message;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     String attachment;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     String signature;
 
-    public Message(Message msg) {
-        date = msg.date;
-        author = msg.author;
-        message = msg.message;
-        attachment = msg.attachment;;
-        signature = msg.signature;
+    public Message(MessageRequest msg) {
+        date = msg.getDate();
+        author = msg.getAuthor();
+        message = msg.getMessage();
+        attachment = msg.getAttachment();;
+        signature = msg.getSignature();
+    }
+
+    public MessageSuccess toMessageSuccess() {
+        return new MessageSuccess(messageId, date, author, message, attachment, signature);
     }
 
     public Message() {

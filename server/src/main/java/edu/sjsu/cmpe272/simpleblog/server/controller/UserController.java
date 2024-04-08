@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe272.simpleblog.server.controller;
 
+import edu.sjsu.cmpe272.simpleblog.common.request.UserRequest;
 import edu.sjsu.cmpe272.simpleblog.common.response.UserSuccess;
 import edu.sjsu.cmpe272.simpleblog.server.entity.User;
 import edu.sjsu.cmpe272.simpleblog.server.repository.UserRepository;
@@ -15,7 +16,7 @@ public class UserController {
     UserRepository repository;
 
     @PostMapping("/create")
-    public UserSuccess createUser(@RequestBody User user) {
+    public UserSuccess createUser(@RequestBody UserRequest user) {
         User usr = new User(user);
         repository.save(usr);
 
