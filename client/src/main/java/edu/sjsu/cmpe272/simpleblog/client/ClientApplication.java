@@ -77,6 +77,7 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             }
             if (msgList.isEmpty()) {
                 log.info("No messages to display");
+                System.out.println("No messages to display");
                 return 0;
             }
             if (saveAttachment!= null && saveAttachment) {
@@ -97,6 +98,7 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             MessageRequest request = new MessageRequest();
             UserKey userKey =  util.getUserKey();
             if (userKey == null) {
+                System.out.println("User not registered, please create user and then post a message");
                 return -1;
             }
 
@@ -123,6 +125,7 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 return -1;
             } else {
                 log.info("Message with Id {} is saved to database", response.getMessageId());
+                System.out.println("Message with Id " + response.getMessageId()+ " is saved to database");
             }
         } catch (Exception e) {
             log.error("Error while posting message {}", e.getMessage());
@@ -138,7 +141,9 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             UserKey userKey =  util.getUserKey();
 
             if (userKey != null) {
-                log.error("User is already created for this client");
+                String msg = "User is already created for this client";
+                log.error(msg);
+                System.out.println(msg);
                 return -1;
             }
 
@@ -168,6 +173,7 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             }
 
             log.info("User with Id {} is created", id);
+            System.out.println("User with Id "+ id +" is created");
             return exitCode;
         } catch (Exception e) {
             log.error("Error while creating user : \n {}", e.getMessage());
