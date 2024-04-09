@@ -34,7 +34,7 @@ public class MessageSuccess {
     public String toString() {
         String paperClip = "";
         if(attachment != null) {
-            paperClip = "📎";
+            paperClip = " 📎";
         }
         String val = messageId + ": " + date + " " + author + " says " + "\"" + message+ "\"" +paperClip;
         return val;

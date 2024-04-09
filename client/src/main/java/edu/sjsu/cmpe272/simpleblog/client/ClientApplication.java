@@ -69,14 +69,20 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 request.setNext(page);
                 MessageSuccessList response = restTemplate.postForObject(uri, request, MessageSuccessList.class);
 
-                if (response == null || response.getMsgSuccessList().isEmpty()) {
-                    log.info("No messages to display");
-                    return 0;
+                if (response != null && !response.getMsgSuccessList().isEmpty()) {
+                    msgList.addAll(response.getMsgSuccessList());
                 }
-                msgList.addAll(response.getMsgSuccessList());
                 count-=10;
                 page++;
             }
+            if (msgList.isEmpty()) {
+                log.info("No messages to display");
+                return 0;
+            }
+            if (saveAttachment!= null && saveAttachment) {
+                util.saveAttachments(msgList);
+            }
+
             System.out.println(util.printMessages(msgList));
             return 0;
         } catch (Exception e) {

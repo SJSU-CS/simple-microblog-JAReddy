@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -127,5 +130,18 @@ public class Util {
             sb.append(m.toString()+"\n");
         }
         return sb.toString();
+    }
+
+    void saveAttachments(List<MessageSuccess> msgList) {
+        for (MessageSuccess m : msgList) {
+            try {
+                if(m.getAttachment() == null) continue;
+                byte[] decodedBytes = Base64.getDecoder().decode(m.getAttachment());
+                String fileName = m.getMessageId()+ ".out";
+                Files.write(Paths.get(fileName), decodedBytes);
+            } catch (IOException e) {
+                log.error("Error while saving attachments: {}", e.getMessage());
+            }
+        }
     }
 }
