@@ -1,6 +1,5 @@
 package edu.sjsu.cmpe272.simpleblog.client;
 
-
 import edu.sjsu.cmpe272.simpleblog.common.request.MessageRequest;
 import edu.sjsu.cmpe272.simpleblog.common.request.PaginatedRequest;
 import edu.sjsu.cmpe272.simpleblog.common.request.UserRequest;
