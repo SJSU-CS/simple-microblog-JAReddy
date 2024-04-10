@@ -7,7 +7,6 @@ import edu.sjsu.cmpe272.simpleblog.common.response.MessageSuccessList;
 import edu.sjsu.cmpe272.simpleblog.server.entity.Message;
 import edu.sjsu.cmpe272.simpleblog.server.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,8 +38,8 @@ public class MessageController {
     @PostMapping("/list")
     public MessageSuccessList listMessage(@RequestBody PaginatedRequest request) {
         Pageable pageable = PageRequest.of(request.getNext(), request.getLimit());
-        Page<Message> msgList = repository.findAll(pageable);
-        return convertToMessageSuccessList(msgList.getContent());
+        List<Message> msgList = repository.findByMessageIdLessThanEqualOrderByMessageIdDesc(request.getStartId(), pageable);
+        return convertToMessageSuccessList(msgList);
     }
 
     private MessageSuccessList convertToMessageSuccessList(List<Message> msgList) {

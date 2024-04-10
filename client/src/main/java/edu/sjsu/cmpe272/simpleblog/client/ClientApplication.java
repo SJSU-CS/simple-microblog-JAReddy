@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.client.RestTemplate;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -38,9 +37,6 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
     @Autowired
     IFactory iFactory;
 
-    @Autowired
-    private ConfigurableApplicationContext context;
-
     @Value("${serverUrl}")
     private String serverUrl;
 
@@ -49,7 +45,7 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
 
     @Command(name = "list", description = "list messages")
     public int list(
-            @Option(names = {"--starting-id"}, description = "Starting Id to list the messages") Integer start,
+            @Option(names = {"--starting-id"}, description = "Starting Id to list the messages") Long start,
             @Option(names = {"--count-number"}, description = "Number of messages to return") Integer count,
             @Option(names = {"--save-attachment"}, description = "To create a file with the base64 decoded attachment named message-id.out") Boolean saveAttachment
     ) {
@@ -57,8 +53,10 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             final String uri = serverUrl + "/messages/list";
             List<MessageSuccess> msgList = new ArrayList<>();
             PaginatedRequest request = new PaginatedRequest();
-            if (start != null) {
-                request.setNext(0);
+            if (start == -1) {
+                request.setStartId(1000000000L);
+            } else {
+                request.setStartId(start);
             }
             RestTemplate restTemplate = new RestTemplate();
             int page = 0;
@@ -147,6 +145,17 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 return -1;
             }
 
+            final String verifyUrl = serverUrl+"/user/"+id+"/public-key";
+            RestTemplate restTemplate = new RestTemplate();
+            String verificationMsg = String.valueOf(restTemplate.getForEntity(verifyUrl, String.class));
+
+            if (verificationMsg != null && !verificationMsg.contains("Username not found")) {
+                String msg = "Duplicate userId";
+                log.error(msg);
+                System.out.println(msg);
+                return -1;
+            }
+
             final String uri = serverUrl + "/user/create";
             // Generate Key Pair
             KeyPair keyPair = util.generateKeyPair();
@@ -158,7 +167,6 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
 
             // Save User ID and Private Key to mb.ini file
             util.saveToMbIni(id, keyPair.getPrivate());
-            RestTemplate restTemplate = new RestTemplate();
 
             String publicKeyBase64 = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
             UserRequest request = new UserRequest(id, publicKeyBase64);
@@ -169,11 +177,11 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 exitCode = -1;
                 return exitCode;
             } else {
-                log.info("User with Id {} and public key is saved to database", id);
+                String msg ="User with Id " + id+ " and public key is saved to database";
+                System.out.println(msg);
             }
-
-            log.info("User with Id {} is created", id);
-            System.out.println("User with Id "+ id +" is created");
+            String res = "User with Id "+ id +" is created";
+            System.out.println(res);
             return exitCode;
         } catch (Exception e) {
             log.error("Error while creating user : \n {}", e.getMessage());

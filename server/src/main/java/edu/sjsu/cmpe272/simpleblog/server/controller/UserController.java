@@ -18,8 +18,12 @@ public class UserController {
     @PostMapping("/create")
     public UserSuccess createUser(@RequestBody UserRequest user) {
         User usr = new User(user);
-        repository.save(usr);
-
+        Optional<User> existingUser = repository.findById(user.getUser());
+        if (existingUser.isPresent()) {
+            return new UserSuccess("Duplicate Id");
+        } else{
+            repository.save(usr);
+        }
         UserSuccess res = new UserSuccess("welcome");
         return res;
     }
