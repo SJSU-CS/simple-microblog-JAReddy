@@ -44,8 +44,8 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
 
     @Command(name = "list", description = "list messages")
     public int list(
-            @Option(names = {"--starting-id"}, description = "Starting Id to list the messages") Long start,
-            @Option(names = {"--count-number"}, description = "Number of messages to return") Integer count,
+            @Option(names = {"--starting-id"}, defaultValue = "-1", description = "Starting Id to list the messages") Long start,
+            @Option(names = {"--count-number"}, defaultValue = "10", description = "Number of messages to return") Integer count,
             @Option(names = {"--save-attachment"}, description = "To create a file with the base64 decoded attachment named message-id.out") Boolean saveAttachment
     ) {
         try {

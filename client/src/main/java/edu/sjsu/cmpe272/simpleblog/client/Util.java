@@ -1,6 +1,5 @@
 package edu.sjsu.cmpe272.simpleblog.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.sjsu.cmpe272.simpleblog.common.request.MessageRequest;
@@ -73,7 +72,7 @@ public class Util {
         }
     }
 
-    String signMessageRequest(MessageRequest message, UserKey userKey) throws JsonProcessingException, NoSuchAlgorithmException {
+    String signMessageRequest(MessageRequest message, UserKey userKey) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
@@ -83,7 +82,7 @@ public class Util {
             node.put("author", message.getAuthor());
             node.put("message", message.getMessage());
             node.put("attachment", message.getAttachment());
-            String jsonString = objectMapper.writeValueAsString(message);
+            String jsonString = objectMapper.writeValueAsString(node);
 
             // Remove whitespace characters from JSON string
             String compactJsonString = jsonString.replaceAll("\\s", "");

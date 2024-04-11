@@ -7,6 +7,10 @@ import edu.sjsu.cmpe272.simpleblog.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Optional;
 
 @RestController
@@ -30,11 +34,20 @@ public class UserController {
 
     @GetMapping("/{userName}/public-key")
     public String getPublicKey(@PathVariable String userName) {
-        Optional<User> usr = repository.findById(userName);
-        if (usr.isPresent()) {
-            return usr.get().getPublicKey();
-        } else {
-            return "Username not found";
+        try {
+            Optional<User> usr = repository.findById(userName);
+            if (usr.isPresent()) {
+                byte[] decodedBytes = Base64.getDecoder().decode(usr.get().getPublicKey());
+                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedBytes);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+                PublicKey key = keyFactory.generatePublic(keySpec);
+                return key.toString();
+            } else {
+                return "Username not found";
+            }
+        } catch (Exception e) {
+            return "Error while fetching public key";
         }
     }
 }

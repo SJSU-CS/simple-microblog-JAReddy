@@ -17,6 +17,8 @@ public class MessageSuccess {
 
     String signature;
 
+    String error;
+
     public MessageSuccess() {
 
     }
