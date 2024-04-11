@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PaginatedRequest {
-    Integer limit = 3;
+    Integer limit = 10;
     Integer next;
     Long startId;
 }
