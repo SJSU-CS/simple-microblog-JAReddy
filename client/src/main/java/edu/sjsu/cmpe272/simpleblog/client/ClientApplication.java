@@ -60,7 +60,11 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             RestTemplate restTemplate = new RestTemplate();
             int page = 0;
             while (count > 0) {
-                request.setLimit(20);
+                if (count < 20) {
+                    request.setLimit(count);
+                } else {
+                    request.setLimit(20);
+                }
                 request.setPage(page);
                 MessageSuccessList response = restTemplate.postForObject(uri, request, MessageSuccessList.class);
 
