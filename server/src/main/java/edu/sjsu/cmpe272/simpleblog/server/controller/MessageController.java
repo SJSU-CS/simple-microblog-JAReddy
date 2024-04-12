@@ -60,8 +60,13 @@ public class MessageController {
 
     @PostMapping("/list")
     public MessageSuccessList listMessage(@RequestBody PaginatedRequest request) {
-        Pageable pageable = PageRequest.of(request.getNext(), request.getLimit());
-        List<Message> msgList = repository.findByMessageIdLessThanEqualOrderByMessageIdDesc(request.getStartId(), pageable);
+        if (request.getLimit() > 20) {
+            MessageSuccessList res = new MessageSuccessList();
+            res.setError("You can fetch a maximum of 20 records at once");
+            return res;
+        }
+        Pageable pageable = PageRequest.of(request.getPage(), request.getLimit());
+        List<Message> msgList = repository.findByMessageIdLessThanEqualOrderByMessageIdDesc(request.getNext(), pageable);
         return convertToMessageSuccessList(msgList);
     }
 

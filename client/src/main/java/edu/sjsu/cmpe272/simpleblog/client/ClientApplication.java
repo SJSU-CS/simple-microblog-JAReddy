@@ -53,23 +53,21 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
             List<MessageSuccess> msgList = new ArrayList<>();
             PaginatedRequest request = new PaginatedRequest();
             if (start == -1) {
-                request.setStartId(1000000000L);
+                request.setNext(1000000000L);
             } else {
-                request.setStartId(start);
+                request.setNext(start);
             }
             RestTemplate restTemplate = new RestTemplate();
             int page = 0;
-            while (count>0) {
-                if (count < 10) {
-                    request.setLimit(count);
-                }
-                request.setNext(page);
+            while (count > 0) {
+                request.setLimit(20);
+                request.setPage(page);
                 MessageSuccessList response = restTemplate.postForObject(uri, request, MessageSuccessList.class);
 
                 if (response != null && !response.getMsgSuccessList().isEmpty()) {
                     msgList.addAll(response.getMsgSuccessList());
                 }
-                count-=10;
+                count-=20;
                 page++;
             }
             if (msgList.isEmpty()) {
