@@ -99,6 +99,18 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 return -1;
             }
 
+            final String verifyUrl = serverUrl+"/user/"+userKey.getUserId()+"/public-key";
+            RestTemplate restTemplate = new RestTemplate();
+
+            String verificationMsg = String.valueOf(restTemplate.getForEntity(verifyUrl, String.class));
+
+            if (verificationMsg != null && verificationMsg.contains("Username not found")) {
+                String msg = "Unauthorized user, please create a new user for this client and delete any mb.ini file in current directory";
+                log.error(msg);
+                System.out.println(msg);
+                return -1;
+            }
+
             if (!attachment.equals("null")) {
                 File file = new File(attachment);
                 byte[] fileBytes = Files.readAllBytes(file.toPath());
@@ -114,7 +126,6 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
 
             request.setSignature(util.signMessageRequest(request, userKey));
 
-            RestTemplate restTemplate = new RestTemplate();
             MessageSuccess response = restTemplate.postForObject(uri, request, MessageSuccess.class);
 
             if(response == null || response.getMessageId() == null) {
@@ -175,10 +186,11 @@ public class ClientApplication implements CommandLineRunner, ExitCodeGenerator {
                 log.error("Error while saving the user details in the server");
                 exitCode = -1;
                 return exitCode;
-            } else {
-                String msg ="User with Id " + id+ " and public key is saved to database";
-                System.out.println(msg);
             }
+//            else {
+//                String msg ="User with Id " + id+ " and public key is saved to database";
+//                System.out.println(msg);
+//            }
             String res = "User with Id "+ id +" is created";
             System.out.println(res);
             return exitCode;
